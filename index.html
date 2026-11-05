@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f36921">
+  <meta name="description" content="Discover factory-sealed auctions and high-value finds from your sliBuy scanner. Browse categories, compare snapshot bids, and make the hunt your own.">
+  <title>The Daily Find · sliBuy Auction Explorer</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#results">Skip to auctions</a>
+  <div class="announcement"><span class="live-dot"></span> A fresh start for your next great find. <span class="announcement-end">Daily scanner refresh · around 7 AM Central</span></div>
+  <header class="site-header">
+    <div class="header-inner wrap">
+      <a href="./" class="brand" aria-label="sliBuy The Daily Find home"><img src="assets/slibuy.png" alt="sliBuy" width="100" height="40"><span class="brand-divider"></span><span class="brand-title">the daily find<span>AUCTION EXPLORER</span></span></a>
+      <nav aria-label="Main navigation"><a class="nav-active" href="#browse">Browse auctions</a><button id="aboutButton" class="text-button">How it works</button></nav>
+      <button class="header-trash" id="headerTrash"><span data-icon="trash"></span><span>My trash</span><span class="count" id="headerTrashCount">0</span></button>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="tiny-star">✳</span> LESS SCROLLING. MORE DISCOVERING.</p>
+        <h1 id="heroTitle">Big finds.<br><span>Small bids.</span></h1>
+        <p class="hero-description">Factory-sealed favorites. High-value surprises.<br>Your daily auction hunt, thoughtfully organized.</p>
+        <div class="hero-stats" aria-label="Auction overview"><div><strong id="statTotal">—</strong><span>auctions to explore</span></div><div><strong id="statToday">—</strong><span>ending today</span></div><div><strong id="statCategories">—</strong><span>categories</span></div></div>
+      </div>
+      <aside class="refresh-card" aria-label="Refresh schedule">
+        <div class="refresh-top"><span class="refresh-icon" data-icon="refresh"></span><span>FRESH FINDS, DAILY</span><span class="schedule-dot"></span></div>
+        <h2>Next scheduled scan in</h2>
+        <div class="countdown" aria-label="Time until next scheduled refresh"><span><b id="refreshHours">--</b><small>HOURS</small></span><i>:</i><span><b id="refreshMinutes">--</b><small>MINUTES</small></span><i>:</i><span><b id="refreshSeconds">--</b><small>SECONDS</small></span></div>
+        <p class="schedule-label">Scheduled daily around <strong>7 AM Central</strong></p>
+        <div class="scan-stamp"><span data-icon="clock"></span><div><span>Bid snapshot · scan started</span><strong id="scanTime">Connecting to your sheet…</strong></div></div>
+        <p class="snapshot-note">A snapshot, with possibilities. Visit sliBuy for the latest bid.</p>
+      </aside>
+    </section>
+
+    <section id="browse" class="browse" aria-label="Browse auctions">
+      <div class="search-row"><div class="search-box"><span data-icon="search"></span><label class="sr-only" for="search">Search auctions</label><input id="search" type="search" placeholder="What are you hoping to find? Search titles, brands, auction IDs…" autocomplete="off"><kbd aria-hidden="true">/</kbd></div><button id="refreshButton" class="refresh-button" title="Read the latest sheet data"><span data-icon="refresh"></span><span>Refresh</span></button></div>
+      <div id="dataNotice" class="data-notice" role="status" hidden></div>
+      <div class="browse-tabs" role="group" aria-label="Auction view"><button data-view="all" class="active" aria-pressed="true">All auctions <span id="allCount">—</span></button><button data-view="today" aria-pressed="false"><span data-icon="clock"></span> Ending today <span id="todayCount">—</span></button><button data-view="trash" aria-pressed="false"><span data-icon="trash"></span> My trash <span id="trashCount">0</span></button><span class="tabs-note"><span data-icon="shield"></span> Your trash stays in this browser</span></div>
+      <div class="catalog-layout">
+        <aside id="filters" class="filters" aria-label="Auction filters">
+          <div class="filter-heading"><h2>Refine your finds</h2><button id="resetFilters" class="subtle-button">Reset</button><button id="closeFilters" class="icon-button mobile-only" aria-label="Close filters"><span data-icon="close"></span></button></div>
+          <div class="filter-block"><h3>Categories</h3><div id="categoryList" class="category-list"><span class="loading-categories">Loading categories…</span></div></div>
+          <div class="filter-block"><label class="filter-label" for="condition">Condition</label><select id="condition"><option value="">All conditions</option></select></div>
+          <div class="filter-block"><h3>Snapshot bid</h3><div class="price-range"><label><span>Min $</span><input id="minPrice" type="number" min="0" step="1" placeholder="0" inputmode="decimal"></label><span class="range-dash">–</span><label><span>Max $</span><input id="maxPrice" type="number" min="0" step="1" placeholder="Any" inputmode="decimal"></label></div><p id="priceError" class="field-error" hidden>Maximum must be at least the minimum.</p></div>
+          <div class="filter-block"><label class="filter-label" for="savings">Below MSRP</label><select id="savings"><option value="0">Any amount</option><option value="25">25% or more</option><option value="50">50% or more</option><option value="75">75% or more</option><option value="90">90% or more</option></select></div>
+          <div class="filter-block"><label class="filter-label" for="location">Pickup location</label><select id="location"><option value="">All locations</option></select></div>
+          <label class="checkbox-label"><input id="showEnded" type="checkbox"><span>Include ended auctions</span></label>
+          <div class="sidebar-tip"><span data-icon="sparkles"></span><p>A little less clutter.<br><span>Trash a find to hide it just for you. Restore it anytime.</span></p></div>
+        </aside>
+        <div class="results-section" id="results" tabindex="-1">
+          <div class="results-toolbar"><div><p class="section-eyebrow" id="resultsEyebrow">THE GOOD STUFF</p><h2 id="resultsTitle">All auctions <span id="resultCount"></span></h2></div><div class="sort-controls"><button class="filter-toggle" id="openFilters" aria-controls="filters" aria-expanded="false"><span data-icon="sliders"></span> Filters</button><label class="sr-only" for="sort">Sort auctions</label><select id="sort"><option value="ending">Ending soonest</option><option value="price-low">Bid: low to high</option><option value="price-high">Bid: high to low</option><option value="savings">Most below MSRP</option><option value="msrp">Highest MSRP</option><option value="title">Title: A to Z</option></select><div class="view-toggle" role="group" aria-label="Display style"><button id="gridView" class="active" aria-label="Grid view" aria-pressed="true"><span data-icon="grid"></span></button><button id="listView" aria-label="List view" aria-pressed="false"><span data-icon="list"></span></button></div></div></div>
+          <div class="results-meta"><span id="showingText" role="status" aria-live="polite">Finding your next great auction…</span><button class="subtle-button" id="restoreAll" hidden>Restore all trashed items</button></div>
+          <div id="activeFilters" class="active-filters" aria-label="Active filters"></div>
+          <div id="auctionGrid" class="auction-grid" aria-busy="true"></div>
+          <div id="emptyState" class="empty-state" hidden><span data-icon="search"></span><h3 id="emptyTitle">No finds just yet</h3><p id="emptyMessage"></p><button id="emptyAction" class="primary-button">Clear filters</button></div>
+          <div class="load-more-wrap"><button id="loadMore" class="load-more" hidden>Show more auctions <span data-icon="arrow-down"></span></button><p id="pageProgress"></p></div>
+        </div>
+      </div>
+    </section>
+    <section class="closing-note"><span data-icon="sparkles"></span><div><h2>The thrill is in the find.</h2><p>Discover here. Check the latest details and place your bid on sliBuy.</p></div><a href="https://www.slibuy.com" target="_blank" rel="noopener noreferrer">Explore sliBuy <span data-icon="external"></span></a></section>
+  </main>
+  <footer class="wrap"><div class="footer-brand">the daily find<span>An independent auction explorer for sliBuy finds.</span></div><p>Bids are scan-time snapshots. Fees and taxes may apply.<br>Schedules and auction details are subject to change on sliBuy.</p><a id="sheetLink" href="https://docs.google.com/spreadsheets/d/1_wqWVF2aKz6cFcCUVI-Iro7cC7zhailawJb0n_1PpMw/edit?gid=1831520998" target="_blank" rel="noopener noreferrer">View source sheet <span data-icon="external"></span></a></footer>
+  <div id="toast" class="toast" role="status" hidden><span id="toastMessage"></span><button id="undoButton">Undo</button><button id="dismissToast" aria-label="Dismiss notification"><span data-icon="close"></span></button></div>
+  <div id="filterBackdrop" class="filter-backdrop" hidden></div>
+  <dialog id="aboutDialog"><button id="closeAbout" class="icon-button dialog-close" aria-label="Close how it works"><span data-icon="close"></span></button><p class="eyebrow">MEET YOUR DAILY FIND</p><h2>A better way to browse.</h2><ol><li><strong>The scanner does the hunting.</strong><p>Your Google Sheet collects matching sliBuy auctions. This page reads that public data without an API key or sign-in.</p></li><li><strong>You make it yours.</strong><p>Search, pick categories, and narrow the snapshot bids. Trash hides an item in this browser only; you can restore it anytime.</p></li><li><strong>Finish the hunt on sliBuy.</strong><p>Open an auction to check the live bid, condition, pickup details, fees, and official end time before bidding.</p></li></ol><div class="dialog-note">The next-refresh countdown targets 7 AM America/Chicago and adjusts for daylight saving time. The Google Apps Script scanner runs around that time and may finish later. This site checks the sheet every 5 minutes while open; it does not run the scanner.</div></dialog>
+  <noscript><div class="noscript">Please enable JavaScript to load auctions from the public Google Sheet.</div></noscript>
+</body>
+</html>
